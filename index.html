@@ -18,12 +18,13 @@
     <h1>계좌번호 복사</h1>
     <div>계좌번호: <span id="account">110355867811</span></div>
     <button id="copyBtn">복사하기</button>
-    <div id="msg">페이지 열림과 동시에 복사를 시도합니다. 실패하면 버튼을 눌러주세요.</div>
+    <div id="msg">버튼을 눌러 계좌번호를 복사하세요.</div>
   </div>
 
   <script>
     const msgEl = document.getElementById('msg');
     function showMsg(t){ msgEl.textContent = t; }
+
     function fallbackCopy(text){
       const ta = document.createElement('textarea');
       ta.value = text; document.body.appendChild(ta);
@@ -32,6 +33,7 @@
       catch(e){ showMsg('복사 실패 — 번호를 길게 눌러 복사하세요.'); }
       document.body.removeChild(ta);
     }
+
     function copyText(){
       const text = document.getElementById('account').innerText.trim();
       if(!text){ showMsg('복사할 텍스트가 없습니다.'); return; }
@@ -41,11 +43,18 @@
           .catch(()=> fallbackCopy(text));
       } else fallbackCopy(text);
     }
+
     document.getElementById('copyBtn').addEventListener('click', copyText);
 
-    // 시도: 로드 시 자동 복사 (일부 브라우저는 사용자 제스처 필요로 해서 실패할 수 있음)
+    // 자동 복사 시도하되, 실패해도 메시지는 바꾸지 않음
     window.addEventListener('load', ()=> {
-      try { copyText(); } catch(e){ /* 무시 */ }
+      const text = document.getElementById('account').innerText.trim();
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(()=> {
+          // 자동 복사 성공일 때만 메시지 교체
+          showMsg('복사되었습니다!');
+        }).catch(()=> {/* 실패 시 무시 */});
+      }
     });
   </script>
 </body>
