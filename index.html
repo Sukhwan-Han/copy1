@@ -28,7 +28,9 @@
   <script>
     const msgEl = document.getElementById('msg');
 
-    function showMsg(text){ msgEl.textContent = text; }
+function showMsg(text){
+  msgEl.innerText = text; // textContent → innerText
+}
 
     function fallbackCopy(text){
       const ta = document.createElement('textarea');
